@@ -30,6 +30,11 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_PROPERTY_OVERRIDES += \
     persist.sys.camera-sound=1
 
+# Added xbin files
+PRODUCT_COPY_FILES += \
+    vendor/crom/prebuilt/common/xbin/zip:system/xbin/zip \
+    vendor/crom/prebuilt/common/xbin/zipalign:system/xbin/zipalign
+
 # Thank you, please drive thru!
 PRODUCT_PROPERTY_OVERRIDES += persist.sys.dun.override=0
 
@@ -114,6 +119,35 @@ $(call inherit-product-if-exists, external/naver-fonts/fonts.mk)
 # overlay
 PRODUCT_PACKAGE_OVERLAYS += vendor/crom/overlay/dictionaries
 PRODUCT_PACKAGE_OVERLAYS += vendor/crom/overlay/common
+
+PRODUCT_COPY_FILES += \
+    vendor/crom/prebuilt/common/etc/init.d/90userinit:system/etc/init.d/90userinit \
+    vendor/crom/prebuilt/common/etc/init.d/00check:system/etc/init.d/00check \
+    vendor/crom/prebuilt/common/etc/init.d/01zipalign:system/etc/init.d/01zipalign \
+    vendor/crom/prebuilt/common/etc/init.d/02sysctl:system/etc/init.d/02sysctl \
+    vendor/crom/prebuilt/common/etc/init.d/03firstboot:system/etc/init.d/03firstboot \
+    vendor/crom/prebuilt/common/etc/init.d/05freemem:system/etc/init.d/05freemem \
+    vendor/crom/prebuilt/common/etc/init.d/06removecache:system/etc/init.d/06removecache \
+    vendor/crom/prebuilt/common/etc/init.d/07fixperms:system/etc/init.d/07fixperms \
+    vendor/crom/prebuilt/common/etc/init.d/09cron:system/etc/init.d/09cron \
+    vendor/crom/prebuilt/common/etc/init.d/10sdboost:system/etc/init.d/10sdboost \
+    vendor/crom/prebuilt/common/etc/init.d/11battery:system/etc/init.d/11battery \
+    vendor/crom/prebuilt/common/etc/init.d/12touch:system/etc/init.d/12touch \
+    vendor/crom/prebuilt/common/etc/init.d/13minfree:system/etc/init.d/13minfree \
+    vendor/crom/prebuilt/common/etc/init.d/14gpurender:system/etc/init.d/14gpurender \
+    vendor/crom/prebuilt/common/etc/init.d/15sleepers:system/etc/init.d/15sleepers \
+    vendor/crom/prebuilt/common/etc/init.d/16journalism:system/etc/init.d/16journalism \
+    vendor/crom/prebuilt/common/etc/init.d/17sqlite3:system/etc/init.d/17sqlite3 \
+    vendor/crom/prebuilt/common/etc/init.d/18wifisleep:system/etc/init.d/18wifisleep \
+    vendor/crom/prebuilt/common/etc/init.d/19iostats:system/etc/init.d/19iostats \
+    vendor/crom/prebuilt/common/etc/init.d/20setrenice:system/etc/init.d/20setrenice \
+    vendor/crom/prebuilt/common/etc/init.d/21tweaks:system/etc/init.d/21tweaks \
+    vendor/crom/prebuilt/common/etc/init.d/24speedy_modified:system/etc/init.d/24speedy_modified \
+    vendor/crom/prebuilt/common/etc/init.d/25loopy_smoothness_tweak:system/etc/init.d/25loopy_smoothness_tweak \
+    vendor/crom/prebuilt/common/etc/init.d/98tweaks:system/etc/init.d/98tweaks \
+    vendor/crom/prebuilt/common/etc/helpers.sh:system/etc/helpers.sh \
+    vendor/crom/prebuilt/common/etc/init.d.cfg:system/etc/init.d.cfg \
+    vendor/crom/prebuilt/common/bin/sysinit:system/bin/sysinit
 
 # bin
 PRODUCT_COPY_FILES += \
