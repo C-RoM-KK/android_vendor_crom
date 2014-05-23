@@ -44,6 +44,7 @@ PRODUCT_PACKAGES += \
     Apollo \
     BlueBalls \
     CMFileManager \
+    Trebuchet \
     CRoMAbout \
     CRoMOTA \
     DashClock \
