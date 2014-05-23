@@ -1,5 +1,5 @@
 # audio
-include frameworks/base/data/sounds/NewAudio.mk
+#include frameworks/base/data/sounds/NewAudio.mk
 
 # common
 $(call inherit-product, vendor/crom/config/common.mk)
