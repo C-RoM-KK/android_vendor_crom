@@ -70,9 +70,9 @@ PRODUCT_PACKAGES += \
     libemoji
 
 # Screen recorder
-PRODUCT_PACKAGES += \
-    ScreenRecorder \
-    libscreenrecorder
+#PRODUCT_PACKAGES += \
+#    ScreenRecorder \
+#    libscreenrecorder
 
 PRODUCT_PACKAGES += \
     libsepol \
