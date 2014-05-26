@@ -1,11 +1,8 @@
 # Inherit common C-RoM stuff
 $(call inherit-product, vendor/crom/config/common.mk)
 
-# Bring in all audio files
-#include frameworks/base/data/sounds/NewAudio.mk
-
-# Extra Ringtones
-include frameworks/base/data/sounds/AudioPackageNewWave.mk
+# audio
+include frameworks/base/data/sounds/AllAudio.mk
 
 # Optional C-RoM packages
 PRODUCT_PACKAGES += \
