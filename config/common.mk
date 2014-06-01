@@ -158,10 +158,10 @@ PRODUCT_COPY_FILES += \
     vendor/crom/config/permissions/com.crom.android.xml:system/etc/permissions/com.crom.android.xml \
     vendor/crom/config/permissions/com.crom.nfc.enhanced.xml:system/etc/permissions/com.crom.nfc.enhanced.xml
 
-# HFM Files
+# init.d
 PRODUCT_COPY_FILES += \
-        vendor/crom/prebuilt/etc/hosts.alt:system/etc/hosts.alt \
-        vendor/crom/prebuilt/etc/hosts.og:system/etc/hosts.og
+      vendor/crom/prebuilt/common/etc/init.d/00start:system/etc/init.d/00start \
+      vendor/crom/prebuilt/common/etc/init.d/01sysctl:system/etc/init.d/01sysctl
 
 # version
 RELEASE = false
