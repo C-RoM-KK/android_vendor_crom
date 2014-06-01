@@ -60,7 +60,6 @@ PRODUCT_PACKAGES += \
     OmniSwitch \
     PhaseBeam \
     PhotoTable \
-    ROMStats \
     SunBeam \
     Superuser \
     su \
@@ -145,6 +144,10 @@ PRODUCT_COPY_FILES += \
 # SunBeam LWP
 PRODUCT_COPY_FILES += \
     vendor/crom/prebuilt/common/app/SunBeam.apk:system/app/SunBeam.apk
+
+# ROMStats
+PRODUCT_COPY_FILES += \
+    vendor/crom/prebuilt/common/app/ROMStats.apk:system/app/ROMStats.apk
 
 # sip/voip
 PRODUCT_COPY_FILES += \
