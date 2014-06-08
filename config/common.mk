@@ -121,7 +121,6 @@ PRODUCT_PACKAGE_OVERLAYS += vendor/crom/overlay/dictionaries
 PRODUCT_PACKAGE_OVERLAYS += vendor/crom/overlay/common
 
 PRODUCT_COPY_FILES += \
-    vendor/crom/prebuilt/common/etc/init.d/90userinit:system/etc/init.d/90userinit \
     vendor/crom/prebuilt/common/etc/init.d/00check:system/etc/init.d/00check \
     vendor/crom/prebuilt/common/etc/init.d/01zipalign:system/etc/init.d/01zipalign \
     vendor/crom/prebuilt/common/etc/init.d/02sysctl:system/etc/init.d/02sysctl \
