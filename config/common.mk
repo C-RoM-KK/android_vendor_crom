@@ -63,7 +63,6 @@ PRODUCT_PACKAGES += \
     LockClock \
     NoiseField \
     OmniSwitch \
-    PhaseBeam \
     PhotoTable \
     SunBeam \
     Superuser \
