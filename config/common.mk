@@ -107,6 +107,11 @@ PRODUCT_PACKAGES += \
     libFFmpegExtractor \
     libnamparser
 
++# CM Hardware Abstraction Framework
+PRODUCT_PACKAGES += \
+    org.cyanogenmod.hardware \
+    org.cyanogenmod.hardware.xml
+
 # languages
 $(call inherit-product, $(SRC_TARGET_DIR)/product/languages_full.mk)
 
