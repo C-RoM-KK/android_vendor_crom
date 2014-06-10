@@ -1,5 +1,6 @@
 #
 # This policy configuration will be used by all products that
+# inherit from C-RoM
 #
 
 BOARD_SEPOLICY_DIRS += \
@@ -10,7 +11,10 @@ BOARD_SEPOLICY_UNION += \
     file_contexts \
     fs_use \
     genfs_contexts \
-    installd.te \
     seapp_contexts \
+    installd.te \
+    netd.te \
+    system.te \
+    ueventd.te \
     vold.te \
     mac_permissions.xml
