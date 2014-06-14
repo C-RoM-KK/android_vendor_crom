@@ -24,10 +24,23 @@ if [ -z "$OUT" -o ! -d "$OUT" ]; then
 	exit 1
 fi
 
+if [ "$TARGET_BUILD_TYPE" = "debug" ]; then
+    OTAPACKAGE=$OUT/${TARGET_PRODUCT}_debug-ota-$TARGET_BUILD_VARIANT.$USER.zip
+elif [ "$TARGET_BUILD_VARIANT" = "userdebug" ]; then
+    OTAPACKAGE=$OUT/$TARGET_PRODUCT-ota-eng.$USER.zip
+elif [ "$TARGET_BUILD_VARIANT" = "user" ]; then
+    OTAPACKAGE=$OUT/$TARGET_PRODUCT-ota-eng.$USER.zip
+else
+    OTAPACKAGE=$OUT/$TARGET_PRODUCT-ota-$TARGET_BUILD_VARIANT.$USER.zip
+fi
+if [ ! -f "$OTAPACKAGE" ]; then
+    echo "$OTAPACKAGE doesn't exist!";
+    exit 1
+fi
+
 OPTICHARGER=$ANDROID_BUILD_TOP/vendor/crom/tools/opticharger
 QUIET=-q
 DELETE_BINS="applypatch applypatch_static check_prereq recovery updater"
-DELETE_LIBS="libc_malloc_debug_leak.so libc_malloc_debug_qemu.so"
 DELETE_FONTS="MTLmr3m.ttf"
 DELETE_MEDIA="*.qmg"
 
@@ -53,6 +66,9 @@ mkdir -p $REPACK/parallel
 cd $REPACK/parallel
 cp $REPACK/ota/system/framework/framework-res.apk .
 cp $REPACK/ota/system/app/*.apk .
+for f in $REPACK/ota/system/priv-app/*.apk; do
+    cp $f ./priv-app-$(basename $f)
+done
 
 # Do optimization in parallel
 find ./ -name \*.apk | $XARGS $OPTICHARGER
@@ -110,16 +126,26 @@ rm -rf $REPACK/ota/recovery
 rm -rf $REPACK/ota/system/etc/recovery-resource.dat
 
 # Strip modules
-#[ -d $REPACK/ota/system/lib/modules ] && \
-#	find $REPACK/ota/system/lib/modules -name "*.ko" -print0 | xargs -0 arm-eabi-strip --strip-unneeded
+[ -d $REPACK/ota/system/lib/modules ] && \
+	find $REPACK/ota/system/lib/modules -name "*.ko" -print0 | xargs -0 arm-eabi-strip --strip-unneeded
+
+# Swap boot.img
+PREBUILTKERNEL=$OUT/system/cromkernel/boot.img
+if [ -e "$PREBUILTKERNEL" ];then
+   rm -f $REPACK/ota/boot.img
+   mv -f $REPACK/ota/system/cromkernel/boot.img $REPACK/ota/boot.img
+fi
+
+# Determine what to name the new signed package
+MODVERSION=`sed -n -e'/ro\.crom\.version/s/^.*=//p' $OUT/system/build.prop`
+OUTFILE=$OUT/$MODVERSION.zip
+echo MODVERSION: $MODVERSION
 
 # Pack it up and sign
-echo
-echo -e $CL_YLW"Zipping package..."$CL_RST
-echo
+printf "Zipping package..."
 ( cd $REPACK/ota; zip $QUIET -r $REPACK/update.zip . )
 echo
-echo -e $CL_BLU"Signing package..."$CL_RST
+printf "Signing package..."
 SECURITYDIR=$ANDROID_BUILD_TOP/build/target/product/security
 java -Xmx1024m \
 	-jar $OUT/../../../host/$OUT_TARGET_HOST/framework/signapk.jar \
