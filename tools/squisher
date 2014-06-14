@@ -142,10 +142,12 @@ OUTFILE=$OUT/$MODVERSION.zip
 echo MODVERSION: $MODVERSION
 
 # Pack it up and sign
-printf "Zipping package..."
+echo
+ -echo -e $CL_YLW"Zipping package..."$CL_RST
+ -echo
 ( cd $REPACK/ota; zip $QUIET -r $REPACK/update.zip . )
 echo
-printf "Signing package..."
+echo -e $CL_BLU"Signing package..."$CL_RST
 SECURITYDIR=$ANDROID_BUILD_TOP/build/target/product/security
 java -Xmx1024m \
 	-jar $OUT/../../../host/$OUT_TARGET_HOST/framework/signapk.jar \
