@@ -49,13 +49,14 @@ PRODUCT_PACKAGES += \
     Apollo \
     BlueBalls \
     CMFileManager \
+    Trebuchet \
     CRoMAbout \
     CRoMOTA \
     DashClock \
     Development \
     DSPManager \
     Galaxy4 \
-    Launcher3 \
+    KernelTweaker \
     libcyanogen-dsp \
     LiveWallpapers \
     LiveWallpapersPicker \
