@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2012-2013 SlimRoms Project
+<!--
+     Copyright (C) 2014 The C-RoM Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -13,14 +14,14 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- default to disabling the menu key. The CM setting to
+         do this is a no-op unless the below item is true -->
+    <bool name="config_disableMenuKeyInLockScreen">true</bool>
 
     <!-- Package name for default keyguard appwidget [DO NOT TRANSLATE] -->
-    <string name="widget_default_package_name">net.nurik.roman.dashclock</string>
+    <string name="widget_default_package_name">com.cyanogenmod.lockclock</string>
 
     <!-- Class name for default keyguard appwidget [DO NOT TRANSLATE] -->
-    <string name="widget_default_class_name">com.google.android.apps.dashclock.WidgetProvider</string>
-
+    <string name="widget_default_class_name">com.cyanogenmod.lockclock.ClockWidgetProvider</string>
 </resources>
-

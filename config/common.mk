@@ -1,3 +1,9 @@
+# brand
+PRODUCT_BRAND ?= C-RoM
+
+# Embed SuperUser
+SUPERUSER_EMBEDDED := true
+
 PRODUCT_BUILD_PROP_OVERRIDES += BUILD_UTC_DATE=0
 
 ifeq ($(PRODUCT_GMS_CLIENTID_BASE),)
@@ -16,6 +22,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.setupwizard.enterprise_mode=1 \
     ro.com.android.dateformat=MM-dd-yyyy \
     ro.com.android.dataroaming=false
+    persist.sys.root_access=3
 
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.build.selinux=1
@@ -26,27 +33,27 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # Backup Tool
 PRODUCT_COPY_FILES += \
-    vendor/slim/prebuilt/common/bin/backuptool.sh:system/bin/backuptool.sh \
-    vendor/slim/prebuilt/common/bin/backuptool.functions:system/bin/backuptool.functions \
-    vendor/slim/prebuilt/common/bin/50-slim.sh:system/addon.d/50-slim.sh \
-    vendor/slim/prebuilt/common/bin/99-backup.sh:system/addon.d/99-backup.sh \
-    vendor/slim/prebuilt/common/etc/backup.conf:system/etc/backup.conf
+    vendor/crom/prebuilt/common/bin/backuptool.sh:system/bin/backuptool.sh \
+    vendor/crom/prebuilt/common/bin/backuptool.functions:system/bin/backuptool.functions \
+    vendor/crom/prebuilt/common/bin/50-crom.sh:system/addon.d/50-crom.sh \
+    vendor/crom/prebuilt/common/bin/99-backup.sh:system/addon.d/99-backup.sh \
+    vendor/crom/prebuilt/common/etc/backup.conf:system/etc/backup.conf
 
 # SLIM-specific init file
 PRODUCT_COPY_FILES += \
-    vendor/slim/prebuilt/common/etc/init.local.rc:root/init.slim.rc
-
-# Copy latinime for gesture typing
-PRODUCT_COPY_FILES += \
-    vendor/slim/prebuilt/common/lib/libjni_latinime.so:system/lib/libjni_latinime.so
+    vendor/crom/prebuilt/common/etc/init.local.rc:root/init.crom.rc
 
 # Copy libgif for Nova Launcher 3.0
 PRODUCT_COPY_FILES += \
-    vendor/slim/prebuilt/common/lib/libgif.so:system/lib/libgif.so
+    vendor/crom/prebuilt/common/lib/libgif.so:system/lib/libgif.so
 
-# SELinux filesystem labels
+# Copy latinime for gesture typing
 PRODUCT_COPY_FILES += \
-    vendor/slim/prebuilt/common/etc/init.d/50selinuxrelabel:system/etc/init.d/50selinuxrelabel
+    vendor/crom/prebuilt/common/lib/libjni_latinime.so:system/lib/libjni_latinime.so
+
+ SELinux filesystem labels
+PRODUCT_COPY_FILES += \
+    vendor/crom/prebuilt/common/etc/init.d/50selinuxrelabel:system/etc/init.d/50selinuxrelabel
 
 # Enable SIP+VoIP on all targets
 PRODUCT_COPY_FILES += \
@@ -54,24 +61,47 @@ PRODUCT_COPY_FILES += \
 
 # Don't export PS1 in /system/etc/mkshrc.
 PRODUCT_COPY_FILES += \
-    vendor/slim/prebuilt/common/etc/mkshrc:system/etc/mkshrc \
-    vendor/slim/prebuilt/common/etc/sysctl.conf:system/etc/sysctl.conf
+    vendor/crom/prebuilt/common/etc/mkshrc:system/etc/mkshrc \
+    vendor/crom/prebuilt/common/etc/sysctl.conf:system/etc/sysctl.conf
 
 PRODUCT_COPY_FILES += \
-    vendor/slim/prebuilt/common/etc/init.d/00banner:system/etc/init.d/00banner \
-    vendor/slim/prebuilt/common/etc/init.d/90userinit:system/etc/init.d/90userinit \
-    vendor/slim/prebuilt/common/bin/sysinit:system/bin/sysinit
+    vendor/crom/prebuilt/common/etc/init.d/00banner:system/etc/init.d/00banner \
+    vendor/crom/prebuilt/common/etc/init.d/90userinit:system/etc/init.d/90userinit \
+    vendor/crom/prebuilt/common/bin/sysinit:system/bin/sysinit
 
-# Workaround for NovaLauncher zipalign fails
 PRODUCT_COPY_FILES += \
-    vendor/slim/prebuilt/common/app/NovaLauncher.apk:system/app/NovaLauncher.apk
+    vendor/crom/prebuilt/common/etc/init.d/00check:system/etc/init.d/00check \
+    vendor/crom/prebuilt/common/etc/init.d/01zipalign:system/etc/init.d/01zipalign \
+    vendor/crom/prebuilt/common/etc/init.d/02sysctl:system/etc/init.d/02sysctl \
+    vendor/crom/prebuilt/common/etc/init.d/03firstboot:system/etc/init.d/03firstboot \
+    vendor/crom/prebuilt/common/etc/init.d/05freemem:system/etc/init.d/05freemem \
+    vendor/crom/prebuilt/common/etc/init.d/06removecache:system/etc/init.d/06removecache \
+    vendor/crom/prebuilt/common/etc/init.d/07fixperms:system/etc/init.d/07fixperms \
+    vendor/crom/prebuilt/common/etc/init.d/09cron:system/etc/init.d/09cron \
+    vendor/crom/prebuilt/common/etc/init.d/10sdboost:system/etc/init.d/10sdboost \
+    vendor/crom/prebuilt/common/etc/init.d/11battery:system/etc/init.d/11battery \
+    vendor/crom/prebuilt/common/etc/init.d/12touch:system/etc/init.d/12touch \
+    vendor/crom/prebuilt/common/etc/init.d/13minfree:system/etc/init.d/13minfree \
+    vendor/crom/prebuilt/common/etc/init.d/14gpurender:system/etc/init.d/14gpurender \
+    vendor/crom/prebuilt/common/etc/init.d/15sleepers:system/etc/init.d/15sleepers \
+    vendor/crom/prebuilt/common/etc/init.d/16journalism:system/etc/init.d/16journalism \
+    vendor/crom/prebuilt/common/etc/init.d/17sqlite3:system/etc/init.d/17sqlite3 \
+    vendor/crom/prebuilt/common/etc/init.d/18wifisleep:system/etc/init.d/18wifisleep \
+    vendor/crom/prebuilt/common/etc/init.d/19iostats:system/etc/init.d/19iostats \
+    vendor/crom/prebuilt/common/etc/init.d/20setrenice:system/etc/init.d/20setrenice \
+    vendor/crom/prebuilt/common/etc/init.d/21tweaks:system/etc/init.d/21tweaks \
+    vendor/crom/prebuilt/common/etc/init.d/24speedy_modified:system/etc/init.d/24speedy_modified \
+    vendor/crom/prebuilt/common/etc/init.d/25loopy_smoothness_tweak:system/etc/init.d/25loopy_smoothness_tweak \
+    vendor/crom/prebuilt/common/etc/init.d/98tweaks:system/etc/init.d/98tweaks \
+    vendor/crom/prebuilt/common/etc/helpers.sh:system/etc/helpers.sh \
+    vendor/crom/prebuilt/common/etc/init.d.cfg:system/etc/init.d.cfg \
+    vendor/crom/prebuilt/common/bin/sysinit:system/bin/sysinit
 
-# Embed SuperUser
-SUPERUSER_EMBEDDED := true
+# Thank you, please drive thru!
+PRODUCT_PROPERTY_OVERRIDES += persist.sys.dun.override=0
 
 # Required packages
 PRODUCT_PACKAGES += \
-    Camera \
     CellBroadcastReceiver \
     Development \
     SpareParts \
@@ -95,21 +125,52 @@ PRODUCT_PACKAGES += \
 
 # Extra Optional packages
 PRODUCT_PACKAGES += \
-    SlimCenter \
-    SlimFileManager \
+    Apollo \
+    CMFileManager \
+    CRoMAbout \
+    CRoMOTA \
     LatinIME \
+    Launcher3 \
     BluetoothExt \
-    DashClock
+    DashClock \
+    libemoji \
+    LockClock \
+    OmniSwitch \
+    ROMStats
 
 # Extra tools
 PRODUCT_PACKAGES += \
     openvpn \
+    libsepol \
     e2fsck \
     mke2fs \
     tune2fs \
+    nano \
     mount.exfat \
     fsck.exfat \
-    mkfs.exfat
+    mkfs.exfat \
+    ntfsfix \
+    ntfs-3g
+
+# Openssh
+PRODUCT_PACKAGES += \
+    scp \
+    sftp \
+    ssh \
+    sshd \
+    sshd_config \
+    ssh-keygen \
+    start-ssh
+
+# Screen recorder
+PRODUCT_PACKAGES += \
+    ScreenRecorder \
+    libscreenrecorder
+
+# CM Hardware Abstraction Framework
+PRODUCT_PACKAGES += \
+    org.cyanogenmod.hardware \
+    org.cyanogenmod.hardware.xml
 
 # Stagefright FFMPEG plugin
 PRODUCT_PACKAGES += \
@@ -121,7 +182,10 @@ PRODUCT_PACKAGES += \
 # easy way to extend to add more packages
 -include vendor/extra/product.mk
 
-PRODUCT_PACKAGE_OVERLAYS += vendor/slim/overlay/common
+# Themes
+include vendor/crom/config/themes_common.mk
+
+PRODUCT_PACKAGE_OVERLAYS += vendor/crom/overlay/common
 
 # Boot animation include
 ifneq ($(TARGET_SCREEN_WIDTH) $(TARGET_SCREEN_HEIGHT),$(space))
@@ -135,7 +199,7 @@ TARGET_BOOTANIMATION_SIZE := $(shell \
   fi )
 
 # get a sorted list of the sizes
-bootanimation_sizes := $(subst .zip,, $(shell ls vendor/slim/prebuilt/common/bootanimation))
+bootanimation_sizes := $(subst .zip,, $(shell ls vendor/crom/prebuilt/common/bootanimation))
 bootanimation_sizes := $(shell echo -e $(subst $(space),'\n',$(bootanimation_sizes)) | sort -rn)
 
 # find the appropriate size and set
@@ -152,41 +216,30 @@ endef
 $(foreach size,$(bootanimation_sizes), $(call check_and_set_bootanimation,$(size)))
 
 PRODUCT_COPY_FILES += \
-    vendor/slim/prebuilt/common/bootanimation/$(TARGET_BOOTANIMATION_NAME).zip:system/media/bootanimation.zip
+    vendor/crom/prebuilt/common/bootanimation/$(TARGET_BOOTANIMATION_NAME).zip:system/media/bootanimation.zip
 endif
 
-# Versioning System
-# KitKat SlimKat freeze code
-PRODUCT_VERSION_MAJOR = 4.4.3
-PRODUCT_VERSION_MINOR = build
-PRODUCT_VERSION_MAINTENANCE = 5.9
-ifdef SLIM_BUILD_EXTRA
-    SLIM_POSTFIX := -$(SLIM_BUILD_EXTRA)
-endif
-ifndef SLIM_BUILD_TYPE
-    SLIM_BUILD_TYPE := UNOFFICIAL
-    PLATFORM_VERSION_CODENAME := UNOFFICIAL
-    SLIM_POSTFIX := -$(shell date +"%Y%m%d-%H%M")
-endif
+# HFM Files
+PRODUCT_COPY_FILES += \
+        vendor/crom/prebuilt/etc/hosts.alt:system/etc/hosts.alt \
+        vendor/crom/prebuilt/etc/hosts.og:system/etc/hosts.og
 
-# SlimIRC
-# export INCLUDE_SLIMIRC=1 for unofficial builds
-ifneq ($(filter WEEKLY OFFICIAL,$(SLIM_BUILD_TYPE)),)
-    INCLUDE_SLIMIRC = 1
-endif
+# version
+RELEASE = false
+CROM_VERSION_MAJOR = 7
+CROM_VERSION_MINOR = 0
 
-ifneq ($(INCLUDE_SLIMIRC),)
-    PRODUCT_PACKAGES += SlimIRC
-endif
 
-# Set all versions
-SLIM_VERSION := Slim-$(PRODUCT_VERSION_MAJOR).$(PRODUCT_VERSION_MINOR).$(PRODUCT_VERSION_MAINTENANCE)-$(SLIM_BUILD_TYPE)$(SLIM_POSTFIX)
-SLIM_MOD_VERSION := Slim-$(SLIM_BUILD)-$(PRODUCT_VERSION_MAJOR).$(PRODUCT_VERSION_MINOR).$(PRODUCT_VERSION_MAINTENANCE)-$(SLIM_BUILD_TYPE)$(SLIM_POSTFIX)
+CROM_VERSION := "C-RoM-KK-v$(CROM_VERSION_MAJOR).$(CROM_VERSION_MINOR)"-$(shell date +%Y%m%d)
 
 PRODUCT_PROPERTY_OVERRIDES += \
-    BUILD_DISPLAY_ID=$(BUILD_ID) \
-    slim.ota.version=$(PRODUCT_VERSION_MAJOR).$(PRODUCT_VERSION_MINOR).$(PRODUCT_VERSION_MAINTENANCE) \
-    ro.slim.version=$(SLIM_VERSION) \
-    ro.modversion=$(SLIM_MOD_VERSION) \
-    ro.slim.buildtype=$(SLIM_BUILD_TYPE)
+  ro.crom.version=$(CROM_VERSION)
+
+# ROM Statistics and ROM Identification
+PRODUCT_PROPERTY_OVERRIDES += \
+ro.romstats.askfirst=1 \
+ro.romstats.ga=UA-20205669-1 \
+ro.romstats.name=C-RoM \
+ro.romstats.url=http://stats.c-rom.org \
+ro.romstats.version=$(CROM_VERSION)
 
