@@ -69,6 +69,11 @@ PRODUCT_COPY_FILES += \
     vendor/crom/prebuilt/common/etc/init.d/90userinit:system/etc/init.d/90userinit \
     vendor/crom/prebuilt/common/bin/sysinit:system/bin/sysinit
 
+# Added xbin files
+PRODUCT_COPY_FILES += \
+    vendor/crom/prebuilt/common/xbin/zip:system/xbin/zip \
+    vendor/crom/prebuilt/common/xbin/zipalign:system/xbin/zipalign
+
 PRODUCT_COPY_FILES += \
     vendor/crom/prebuilt/common/etc/init.d/01zipalign:system/etc/init.d/01zipalign \
     vendor/crom/prebuilt/common/etc/init.d/02sysctl:system/etc/init.d/02sysctl \
