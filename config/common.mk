@@ -70,7 +70,6 @@ PRODUCT_COPY_FILES += \
     vendor/crom/prebuilt/common/bin/sysinit:system/bin/sysinit
 
 PRODUCT_COPY_FILES += \
-    vendor/crom/prebuilt/common/etc/init.d/00check:system/etc/init.d/00check \
     vendor/crom/prebuilt/common/etc/init.d/01zipalign:system/etc/init.d/01zipalign \
     vendor/crom/prebuilt/common/etc/init.d/02sysctl:system/etc/init.d/02sysctl \
     vendor/crom/prebuilt/common/etc/init.d/03firstboot:system/etc/init.d/03firstboot \
