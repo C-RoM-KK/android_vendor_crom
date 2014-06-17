@@ -176,14 +176,13 @@ PRODUCT_COPY_FILES += \
     vendor/crom/prebuilt/common/bin/99-backup.sh:system/addon.d/99-backup.sh \
     vendor/crom/prebuilt/common/etc/backup.conf:system/etc/backup.conf
 
+# Copy latinime for gesture typing
+PRODUCT_COPY_FILES += \
+    vendor/crom/prebuilt/common/lib/libjni_latinime.so:system/lib/libjni_latinime.so
 
 # SunBeam LWP
 PRODUCT_COPY_FILES += \
     vendor/crom/prebuilt/common/app/SunBeam.apk:system/app/SunBeam.apk
-
-# ROMStats
-PRODUCT_COPY_FILES += \
-    vendor/crom/prebuilt/common/app/ROMStats.apk:system/app/ROMStats.apk
 
 # sip/voip
 PRODUCT_COPY_FILES += \
@@ -191,13 +190,44 @@ PRODUCT_COPY_FILES += \
 
 # nfc
 PRODUCT_COPY_FILES += \
-    vendor/crom/config/permissions/com.crom.android.xml:system/etc/permissions/com.crom.android.xml \
-    vendor/crom/config/permissions/com.crom.nfc.enhanced.xml:system/etc/permissions/com.crom.nfc.enhanced.xml
+    vendor/crom/config/permissions/com.crom.android.xml:system/etc/permissions/com.crom.android.xml
 
 # HFM Files
 PRODUCT_COPY_FILES += \
         vendor/crom/prebuilt/etc/hosts.alt:system/etc/hosts.alt \
         vendor/crom/prebuilt/etc/hosts.og:system/etc/hosts.og
+
+# Boot animation include
+ifneq ($(TARGET_SCREEN_WIDTH) $(TARGET_SCREEN_HEIGHT),$(space))
+
+# determine the smaller dimension
+TARGET_BOOTANIMATION_SIZE := $(shell \
+  if [ $(TARGET_SCREEN_WIDTH) -lt $(TARGET_SCREEN_HEIGHT) ]; then \
+    echo $(TARGET_SCREEN_WIDTH); \
+  else \
+    echo $(TARGET_SCREEN_HEIGHT); \
+  fi )
+
+# get a sorted list of the sizes
+bootanimation_sizes := $(subst .zip,, $(shell ls vendor/crom/prebuilt/common/bootanimation))
+bootanimation_sizes := $(shell echo -e $(subst $(space),'\n',$(bootanimation_sizes)) | sort -rn)
+
+# find the appropriate size and set
+define check_and_set_bootanimation
+$(eval TARGET_BOOTANIMATION_NAME := $(shell \
+  if [ -z "$(TARGET_BOOTANIMATION_NAME)" ]; then
+    if [ $(1) -le $(TARGET_BOOTANIMATION_SIZE) ]; then \
+      echo $(1); \
+      exit 0; \
+    fi;
+  fi;
+  echo $(TARGET_BOOTANIMATION_NAME); ))
+endef
+$(foreach size,$(bootanimation_sizes), $(call check_and_set_bootanimation,$(size)))
+
+PRODUCT_COPY_FILES += \
+    vendor/crom/prebuilt/common/bootanimation/$(TARGET_BOOTANIMATION_NAME).zip:system/media/bootanimation.zip
+endif
 
 # version
 RELEASE = false
