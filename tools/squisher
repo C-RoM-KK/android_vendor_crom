@@ -1,9 +1,8 @@
-#!/bin/bash
+#!/bin/sh
 #
 # Squish a CM otapackage for distribution
 # cyanogen
 #
-
 . $ANDROID_BUILD_TOP/vendor/crom/tools/functions
 
 OUT_TARGET_HOST=`uname -a | grep Darwin`
@@ -21,22 +20,8 @@ else
 fi
 
 if [ -z "$OUT" -o ! -d "$OUT" ]; then
-	echo -e $CL_RED"ERROR: $0 only works with a full build environment. $OUT should exist."$CL_RST
-    exit 1
-fi
-
-if [ "$TARGET_BUILD_TYPE" = "debug" ]; then
-    OTAPACKAGE=$OUT/${TARGET_PRODUCT}_debug-ota-$TARGET_BUILD_VARIANT.$USER.zip
-elif [ "$TARGET_BUILD_VARIANT" = "userdebug" ]; then
-    OTAPACKAGE=$OUT/$TARGET_PRODUCT-ota-eng.$USER.zip
-elif [ "$TARGET_BUILD_VARIANT" = "user" ]; then
-    OTAPACKAGE=$OUT/$TARGET_PRODUCT-ota-eng.$USER.zip
-else
-    OTAPACKAGE=$OUT/$TARGET_PRODUCT-ota-$TARGET_BUILD_VARIANT.$USER.zip
-fi
-if [ ! -f "$OTAPACKAGE" ]; then
-	echo -e $CL_RED"$OTAPACKAGE doesn't exist!"$CL_RST;
-    exit 1
+	echo $CL_RED"ERROR: $0 only works with a full build environment. $OUT should exist."$CL_RST
+	exit 1
 fi
 
 OPTICHARGER=$ANDROID_BUILD_TOP/vendor/crom/tools/opticharger
@@ -48,17 +33,17 @@ DELETE_PRIV_APKS="Launcher2.apk"
 DELETE_FONTS="MTLmr3m.ttf"
 
 REPACK=$OUT/repack.d
-printf "Sanitizing environment..."
+echo
+echo -e $CL_CYN"Sanitizing Environment..."$CL_RST
 rm -rf $REPACK
 mkdir -p $REPACK
 echo
-
 
 # Unpack the otapackage and opticharge all apks
 mkdir $REPACK/ota
 (
 cd $REPACK/ota
-printf "Unpacking $OTAPACKAGE..."
+echo -e "Unpacking "$CL_CYN""$OTAPACKAGE""$CL_RST"..."
 unzip $QUIET $OTAPACKAGE
 echo
 
@@ -72,7 +57,6 @@ cp $REPACK/ota/system/app/*.apk .
 for f in $REPACK/ota/system/priv-app/*.apk; do
     cp $f ./priv-app-$(basename $f)
 done
-
 
 # Do optimization in parallel
 find ./ -name \*.apk | $XARGS $OPTICHARGER
@@ -95,36 +79,32 @@ $SED -i \
 	-e '/ro\.build\.type/s/eng/user/' \
 	$REPACK/ota/system/build.prop
 
+# Determine what to name the new signed package
+MODVERSION=`sed -n -e'/ro\.crom\.version/s/^.*=//p' $OUT/system/build.prop`
+TARGET_PRODUCT_FINAL=`echo $TARGET_PRODUCT | cut -d '_' -f2`
+echo -e $CL_CYN"MODVERSION: $MODVERSION"$CL_RST
+OUTFILE=$OUT/$MODVERSION-$TARGET_PRODUCT_FINAL.zip
 
 # Delete unnecessary binaries
 ( cd $REPACK/ota/system/bin; echo $DELETE_BINS | xargs rm -f; )
 
+# Delete unnecessary libraries
+( cd $REPACK/ota/system/lib; echo $DELETE_LIBS | xargs rm -f; )
+
 # Delete Offline charging mode files
 ( cd $REPACK/ota/system/media; echo $DELETE_MEDIA | xargs rm -f; )
 
-# Delete Home Apk's
-( cd $REPACK/ota/system/app; echo $DELETE_APKS | xargs rm -f; )
-
-# Delete priv-app Apk's
-( cd $REPACK/ota/system/priv-app; echo $DELETE_PRIV_APKS | xargs rm -f; )
-
+if [ "$TARGET_PRODUCT_FINAL" != "galaxysmtd" ]
+then
 # No need for modem.bin
 rm -f $REPACK/ota/modem.bin
+fi
 
 # No need for media/video
 rm -rf $REPACK/ota/system/media/video
 
 # Delete Unnecessary Fonts
 ( cd $REPACK/ota/system/fonts; echo $DELETE_FONTS | xargs rm -f; )
-
-# Delete compiled fonts
-#rm -rf $REPACK/ota/system/fonts
-
-#make dir for fonts again
-#mkdir $REPACK/ota/system/fonts
-
-# Add precompiled fonts
-#mv -f $REPACK/ota/system/sfont/*.ttf $REPACK/ota/system/fonts/
 
 # No need for tts
 rm -rf $REPACK/ota/system/tts
@@ -137,8 +117,8 @@ rm -rf $REPACK/ota/recovery
 rm -rf $REPACK/ota/system/etc/recovery-resource.dat
 
 # Strip modules
-[ -d $REPACK/ota/system/lib/modules ] && \
-	find $REPACK/ota/system/lib/modules -name "*.ko" -print0 | xargs -0 arm-eabi-strip --strip-unneeded
+#[ -d $REPACK/ota/system/lib/modules ] && \
+#	find $REPACK/ota/system/lib/modules -name "*.ko" -print0 | xargs -0 arm-eabi-strip --strip-unneeded
 
 # Swap boot.img
 PREBUILTKERNEL=$OUT/system/cromkernel/boot.img
@@ -146,11 +126,6 @@ if [ -e "$PREBUILTKERNEL" ];then
    rm -f $REPACK/ota/boot.img
    mv -f $REPACK/ota/system/cromkernel/boot.img $REPACK/ota/boot.img
 fi
-
-# Determine what to name the new signed package
-MODVERSION=`sed -n -e'/ro\.crom\.version/s/^.*=//p' $REPACK/ota/system/build.prop`
-OUTFILE=$OUT/$MODVERSION.zip
-echo -e $CL_CYN"MODVERSION: $MODVERSION"$CL_RST
 
 # Pack it up and sign
 printf "Zipping package..."
@@ -173,21 +148,22 @@ img=`basename $OUTFILE`
 cd `dirname $OUTFILE`
 $MD5 $img >$img.md5
 ZIPSIZE=`ls -lah $OUTFILE | awk '{ print $5}' `
+
 echo -e
-echo -e
-echo -e
+echo -e $CL_BLU" *****************************************************" $CL_RST
 echo -e $CL_YLW"     _____             _____                _____     " $CL_RST
 echo -e $CL_YLW"  __|___  |__       __|__   |__  _____  ___|    _|__  " $CL_RST
 echo -e $CL_YLW" |   ___|    | ___ |     |     |/     \|    \  /  | | " $CL_RST
 echo -e $CL_YLW" |   |__     ||___||     \     ||     ||     \/   | | " $CL_RST
 echo -e $CL_YLW" |______|  __|     |__|\__\  __|\_____/|__/\__/|__|_| " $CL_RST
 echo -e $CL_YLW"    |_____|           |_____|              |_____|    " $CL_RST
+echo -e $CL_BLU" *****************************************************" $CL_RST
 echo -e
-echo -e $CL_GRN"*====================== C-RoM Build is done ======================*"$CL_RST
-echo -e $CL_RED"| ZIP:"$CL_YLW" $OUTFILE                                            "$CL_RST
-echo -e $CL_RED"| MD5:"$CL_BLU" $(cat $img.md5 | awk '{ print $1 }')                "$CL_RST
-echo -e $CL_RED"| SIZE:"$CL_YLW" $ZIPSIZE                                           "$CL_RST
-echo -e $CL_GRN"*=========================== ENJOY ===============================*"$CL_RST
+echo -e $CL_GRN"*================== C-RoM Build is done ===================*"$CL_RST
+echo -e $CL_BLU"| Package complete"$CL_RST" : "$CL_CYN"$OUTFILE             "$CL_RST
+echo -e $CL_YLW"| MD5":$CL_BLU" $(cat $img.md5 | awk '{ print $1 }')        "$CL_RST
+echo -e $CL_BLU"| SIZE:"$CL_YLW" $ZIPSIZE                                   "$CL_RST
+echo -e $CL_GRN"*======================== ENJOY! ==========================*"$CL_RST
 echo -e
 echo
 )
