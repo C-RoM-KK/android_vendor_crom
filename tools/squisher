@@ -117,8 +117,8 @@ rm -rf $REPACK/ota/recovery
 rm -rf $REPACK/ota/system/etc/recovery-resource.dat
 
 # Strip modules
-#[ -d $REPACK/ota/system/lib/modules ] && \
-#	find $REPACK/ota/system/lib/modules -name "*.ko" -print0 | xargs -0 arm-eabi-strip --strip-unneeded
+[ -d $REPACK/ota/system/lib/modules ] && \
+	find $REPACK/ota/system/lib/modules -name "*.ko" -print0 | xargs -0 arm-eabi-strip --strip-unneeded
 
 # Swap boot.img
 PREBUILTKERNEL=$OUT/system/cromkernel/boot.img
