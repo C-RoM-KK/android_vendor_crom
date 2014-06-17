@@ -63,6 +63,7 @@ PRODUCT_PACKAGES += \
     NoiseField \
     OmniSwitch \
     PhotoTable \
+    ROMStats \
     SunBeam \
     Superuser \
     su \
