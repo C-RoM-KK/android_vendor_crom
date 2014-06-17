@@ -24,6 +24,11 @@ if [ -z "$OUT" -o ! -d "$OUT" ]; then
 	exit 1
 fi
 
+if [ ! -f "$OTAPACKAGE" ]; then
+	echo -e $CL_RED"$OTAPACKAGE doesn't exist!"$CL_RST;
+    exit 1
+ fi
+
 OPTICHARGER=$ANDROID_BUILD_TOP/vendor/crom/tools/opticharger
 QUIET=-q
 DELETE_BINS="applypatch applypatch_static check_prereq recovery updater"
@@ -120,25 +125,20 @@ rm -rf $REPACK/ota/system/etc/recovery-resource.dat
 [ -d $REPACK/ota/system/lib/modules ] && \
 	find $REPACK/ota/system/lib/modules -name "*.ko" -print0 | xargs -0 arm-eabi-strip --strip-unneeded
 
-# Swap boot.img
-PREBUILTKERNEL=$OUT/system/cromkernel/boot.img
-if [ -e "$PREBUILTKERNEL" ];then
-   rm -f $REPACK/ota/boot.img
-   mv -f $REPACK/ota/system/cromkernel/boot.img $REPACK/ota/boot.img
-fi
-
 # Pack it up and sign
-printf "Zipping package..."
+echo
+echo -e $CL_YLW"Zipping package..."$CL_RST
+echo
 ( cd $REPACK/ota; zip $QUIET -r $REPACK/update.zip . )
 echo
-printf "Signing package..."
+echo -e $CL_BLU"Signing package..."$CL_RST
 SECURITYDIR=$ANDROID_BUILD_TOP/build/target/product/security
 java -Xmx1024m \
 	-jar $OUT/../../../host/$OUT_TARGET_HOST/framework/signapk.jar \
 	-w $SECURITYDIR/testkey.x509.pem $SECURITYDIR/testkey.pk8 \
 	$REPACK/update.zip $OUTFILE
 echo
-printf "Cleaning up..."
+echo -e $CL_MAG"Cleaning up..."$CL_RST
 rm -rf $REPACK
 echo
 
@@ -148,7 +148,6 @@ img=`basename $OUTFILE`
 cd `dirname $OUTFILE`
 $MD5 $img >$img.md5
 ZIPSIZE=`ls -lah $OUTFILE | awk '{ print $5}' `
-
 echo -e
 echo -e $CL_BLU" *****************************************************" $CL_RST
 echo -e $CL_YLW"     _____             _____                _____     " $CL_RST
@@ -159,12 +158,11 @@ echo -e $CL_YLW" |______|  __|     |__|\__\  __|\_____/|__/\__/|__|_| " $CL_RST
 echo -e $CL_YLW"    |_____|           |_____|              |_____|    " $CL_RST
 echo -e $CL_BLU" *****************************************************" $CL_RST
 echo -e
-echo -e $CL_GRN"*================== C-RoM Build is done ===================*"$CL_RST
-echo -e $CL_BLU"| Package complete"$CL_RST" : "$CL_CYN"$OUTFILE             "$CL_RST
-echo -e $CL_YLW"| MD5":$CL_BLU" $(cat $img.md5 | awk '{ print $1 }')        "$CL_RST
-echo -e $CL_BLU"| SIZE:"$CL_YLW" $ZIPSIZE                                   "$CL_RST
-echo -e $CL_GRN"*======================== ENJOY! ==========================*"$CL_RST
-echo -e
+echo
+echo -e "  ※*================== C-RoM Build is done ===================*※   "
+echo -e "  "$CL_RED"Package complete"$CL_RST" : "$CL_CYN"$OUTFILE "$CL_RST
+echo -e    "$CL_GRN"MD5": $(cat $img.md5 | awk '{ print $1 }')"$CL_RST
+echo -e "  ※*======================== ENJOY! ==========================*※   "
 echo
 )
 
