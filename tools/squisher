@@ -125,6 +125,13 @@ rm -rf $REPACK/ota/system/etc/recovery-resource.dat
 [ -d $REPACK/ota/system/lib/modules ] && \
 	find $REPACK/ota/system/lib/modules -name "*.ko" -print0 | xargs -0 arm-eabi-strip --strip-unneeded
 
+-# Swap boot.img
+PREBUILTKERNEL=$OUT/system/cromkernel/boot.img
+if [ -e "$PREBUILTKERNEL" ];then
+   rm -f $REPACK/ota/boot.img
+   mv -f $REPACK/ota/system/cromkernel/boot.img $REPACK/ota/boot.img
+fi
+
 # Pack it up and sign
 echo
 echo -e $CL_YLW"Zipping package..."$CL_RST
