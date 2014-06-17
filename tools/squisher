@@ -15,7 +15,7 @@ then
    SED=sed
 else
    OUT_TARGET_HOST=darwin-x86
-   MD5=md5sum
+   MD5=md5
    XARGS="xargs -n 1 -P `sysctl hw.ncpu | awk '{print $2}'`"
    SED=gsed
 fi
@@ -149,8 +149,14 @@ fi
 
 # Determine what to name the new signed package
 MODVERSION=`sed -n -e'/ro\.crom\.version/s/^.*=//p' $OUT/system/build.prop`
+# Check for '_' in product name
+if [ "`echo $TARGET_PRODUCT | cut -d '_' -f3`" != "" ]
+then
+TARGET_PRODUCT_FINAL=`echo $TARGET_PRODUCT | cut -d '_' -f2,3`
+else
 TARGET_PRODUCT_FINAL=`echo $TARGET_PRODUCT | cut -d '_' -f2`
-echo -e $CL_CYN"MODVERSION: $MODVERSION"$CL_RST
+fi
+echo $CL_CYN"MODVERSION: $MODVERSION"$CL_RST
 OUTFILE=$OUT/$MODVERSION-$TARGET_PRODUCT_FINAL.zip
 
 # Pack it up and sign
