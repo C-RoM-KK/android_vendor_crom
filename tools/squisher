@@ -24,12 +24,18 @@ if [ -z "$OUT" -o ! -d "$OUT" ]; then
 	exit 1
 fi
 
+if [ ! -f "$OTAPACKAGE" ]; then
+	echo -e $CL_RED"$OTAPACKAGE doesn't exist!"$CL_RST;
+    exit 1
+ fi
+
 OPTICHARGER=$ANDROID_BUILD_TOP/vendor/crom/tools/opticharger
 QUIET=-q
 DELETE_BINS="applypatch applypatch_static check_prereq recovery updater"
-DELETE_LIBS="libc_malloc_debug_leak.so libc_malloc_debug_qemu.so"
-DELETE_FONTS="MTLmr3m.ttf"
 DELETE_MEDIA="*.qmg"
+DELETE_APKS="VideoEditor.apk PinyinIME.apk"
+DELETE_PRIV_APKS="Launcher2.apk"
+DELETE_FONTS="MTLmr3m.ttf"
 
 REPACK=$OUT/repack.d
 echo
@@ -53,12 +59,18 @@ mkdir -p $REPACK/parallel
 cd $REPACK/parallel
 cp $REPACK/ota/system/framework/framework-res.apk .
 cp $REPACK/ota/system/app/*.apk .
+for f in $REPACK/ota/system/priv-app/*.apk; do
+    cp $f ./priv-app-$(basename $f)
+done
 
 # Do optimization in parallel
 find ./ -name \*.apk | $XARGS $OPTICHARGER
 
 # Move optimized apks to repack directory
 mv -f $REPACK/parallel/framework-res.apk $REPACK/ota/system/framework/framework-res.apk
+for f in $REPACK/parallel/priv-app*.apk; do
+    mv $f $REPACK/ota/system/priv-app/$(basename $f | cut -d'-' -f3)
+done
 mv -f $REPACK/parallel/*.apk $REPACK/ota/system/app/
 
 # Return to directory
@@ -110,8 +122,8 @@ rm -rf $REPACK/ota/recovery
 rm -rf $REPACK/ota/system/etc/recovery-resource.dat
 
 # Strip modules
-#[ -d $REPACK/ota/system/lib/modules ] && \
-#	find $REPACK/ota/system/lib/modules -name "*.ko" -print0 | xargs -0 arm-eabi-strip --strip-unneeded
+[ -d $REPACK/ota/system/lib/modules ] && \
+	find $REPACK/ota/system/lib/modules -name "*.ko" -print0 | xargs -0 arm-eabi-strip --strip-unneeded
 
 # Pack it up and sign
 echo
@@ -135,11 +147,22 @@ echo
 img=`basename $OUTFILE`
 cd `dirname $OUTFILE`
 $MD5 $img >$img.md5
+ZIPSIZE=`ls -lah $OUTFILE | awk '{ print $5}' `
+echo -e
+echo -e $CL_BLU" *****************************************************" $CL_RST
+echo -e $CL_YLW"     _____             _____                _____     " $CL_RST
+echo -e $CL_YLW"  __|___  |__       __|__   |__  _____  ___|    _|__  " $CL_RST
+echo -e $CL_YLW" |   ___|    | ___ |     |     |/     \|    \  /  | | " $CL_RST
+echo -e $CL_YLW" |   |__     ||___||     \     ||     ||     \/   | | " $CL_RST
+echo -e $CL_YLW" |______|  __|     |__|\__\  __|\_____/|__/\__/|__|_| " $CL_RST
+echo -e $CL_YLW"    |_____|           |_____|              |_____|    " $CL_RST
+echo -e $CL_BLU" *****************************************************" $CL_RST
+echo -e
 echo
-echo -e "  ※===================================================================================================※   "
+echo -e "  ※*================== C-RoM Build is done ===================*※   "
 echo -e "  "$CL_RED"Package complete"$CL_RST" : "$CL_CYN"$OUTFILE "$CL_RST
-echo -e     "$CL_GRN"MD5": $(cat $img.md5 | awk '{ print $1 }')"$CL_RST
-echo -e "  ※===================================================================================================※   "
+echo -e    "$CL_GRN"MD5": $(cat $img.md5 | awk '{ print $1 }')"$CL_RST
+echo -e "  ※*======================== ENJOY! ==========================*※   "
 echo
 )
 
