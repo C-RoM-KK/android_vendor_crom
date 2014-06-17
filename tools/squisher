@@ -148,15 +148,9 @@ if [ -e "$PREBUILTKERNEL" ];then
 fi
 
 # Determine what to name the new signed package
-MODVERSION=`sed -n -e'/ro\.crom\.version/s/^.*=//p' $OUT/system/build.prop`
-# Check for '_' in product name
-if [ "`echo $TARGET_PRODUCT | cut -d '_' -f3`" != "" ]
-then
-TARGET_PRODUCT_FINAL=`echo $TARGET_PRODUCT | cut -d '_' -f2,3`
-else
+MODVERSION=`sed -n-e'/ro\.crom\.version/s/^.*=//p' $REPACK/ota/system/build.prop`
 TARGET_PRODUCT_FINAL=`echo $TARGET_PRODUCT | cut -d '_' -f2`
-fi
-echo $CL_CYN"MODVERSION: $MODVERSION"$CL_RST
+echo -e $CL_CYN"MODVERSION: $MODVERSION"$CL_RST
 OUTFILE=$OUT/$MODVERSION-$TARGET_PRODUCT_FINAL.zip
 
 # Pack it up and sign
@@ -178,25 +172,23 @@ echo
 (
 img=`basename $OUTFILE`
 cd `dirname $OUTFILE`
-$MD5 $img >$img.md5sum
+$MD5 $img >$img.md5
 ZIPSIZE=`ls -lah $OUTFILE | awk '{ print $5}' `
 echo -e
 echo -e
 echo -e
-echo -e $CL_RED"                                                      " $CL_RST
-echo -e $CL_RED"     _____             _____                _____     " $CL_RST
-echo -e $CL_RED"  __|___  |__       __|__   |__  _____  ___|    _|__  " $CL_RST
-echo -e $CL_RED" |   ___|    | ___ |     |     |/     \|    \  /  | | " $CL_RST
-echo -e $CL_RED" |   |__     ||___||     \     ||     ||     \/   | | " $CL_RST
-echo -e $CL_RED" |______|  __|     |__|\__\  __|\_____/|__/\__/|__|_| " $CL_RST
-echo -e $CL_RED"    |_____|           |_____|              |_____|    " $CL_RST
-echo -e $CL_RED"                                                      " $CL_RST
+echo -e $CL_YLW"     _____             _____                _____     " $CL_RST
+echo -e $CL_YLW"  __|___  |__       __|__   |__  _____  ___|    _|__  " $CL_RST
+echo -e $CL_YLW" |   ___|    | ___ |     |     |/     \|    \  /  | | " $CL_RST
+echo -e $CL_YLW" |   |__     ||___||     \     ||     ||     \/   | | " $CL_RST
+echo -e $CL_YLW" |______|  __|     |__|\__\  __|\_____/|__/\__/|__|_| " $CL_RST
+echo -e $CL_YLW"    |_____|           |_____|              |_____|    " $CL_RST
 echo -e
-echo -e $CL_RED"*====================== C-RoM Build is done ======================*"$CL_RST
+echo -e $CL_GRN"*====================== C-RoM Build is done ======================*"$CL_RST
 echo -e $CL_RED"| ZIP:"$CL_YLW" $OUTFILE                                            "$CL_RST
 echo -e $CL_RED"| MD5:"$CL_BLU" $(cat $img.md5 | awk '{ print $1 }')                "$CL_RST
 echo -e $CL_RED"| SIZE:"$CL_YLW" $ZIPSIZE                                           "$CL_RST
-echo -e $CL_RED"*=========================== ENJOY ===============================*"$CL_RST
+echo -e $CL_GRN"*=========================== ENJOY ===============================*"$CL_RST
 echo -e
 echo
 )
