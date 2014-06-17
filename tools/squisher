@@ -148,10 +148,9 @@ if [ -e "$PREBUILTKERNEL" ];then
 fi
 
 # Determine what to name the new signed package
-MODVERSION=`sed -n-e'/ro\.crom\.version/s/^.*=//p' $REPACK/ota/system/build.prop`
-TARGET_PRODUCT_FINAL=`echo $TARGET_PRODUCT | cut -d '_' -f2`
+MODVERSION=`sed -n -e'/ro\.crom\.version/s/^.*=//p' $REPACK/ota/system/build.prop`
+OUTFILE=$OUT/$MODVERSION.zip
 echo -e $CL_CYN"MODVERSION: $MODVERSION"$CL_RST
-OUTFILE=$OUT/$MODVERSION-$TARGET_PRODUCT_FINAL.zip
 
 # Pack it up and sign
 printf "Zipping package..."
