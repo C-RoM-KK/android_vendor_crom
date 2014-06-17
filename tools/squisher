@@ -10,12 +10,12 @@ OUT_TARGET_HOST=`uname -a | grep Darwin`
 if [ -z "$OUT_TARGET_HOST" ]
 then
    OUT_TARGET_HOST=linux-x86
-   MD5=md5
+   MD5=md5sum
    XARGS="xargs --max-args=1 --max-procs `grep 'processor' /proc/cpuinfo|wc -l`"
    SED=sed
 else
    OUT_TARGET_HOST=darwin-x86
-   MD5=md5
+   MD5=md5sum
    XARGS="xargs -n 1 -P `sysctl hw.ncpu | awk '{print $2}'`"
    SED=gsed
 fi
@@ -174,10 +174,10 @@ img=`basename $OUTFILE`
 cd `dirname $OUTFILE`
 $MD5 $img >$img.md5
 echo
-echo -e "  ※================================================================※   "
+echo -e "  ※===================================================================================================※   "
 echo -e "  "$CL_RED"Package complete"$CL_RST" : "$CL_CYN"$OUTFILE "$CL_RST
 echo -e     "$CL_GRN"MD5": $(cat $img.md5 | awk '{ print $1 }')"$CL_RST
-echo -e "  ※================================================================※   "
+echo -e "  ※===================================================================================================※   "
 echo
 )
 
