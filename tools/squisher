@@ -148,9 +148,10 @@ if [ -e "$PREBUILTKERNEL" ];then
 fi
 
 # Determine what to name the new signed package
-MODVERSION=`sed -n -e'/ro\.modversion/s/^.*=//p' $REPACK/ota/system/build.prop`
-OUTFILE=$OUT/$MODVERSION.zip
+MODVERSION=`sed -n -e'/ro\.crom\.version/s/^.*=//p' $OUT/system/build.prop`
+TARGET_PRODUCT_FINAL=`echo $TARGET_PRODUCT | cut -d '_' -f2`
 echo -e $CL_CYN"MODVERSION: $MODVERSION"$CL_RST
+OUTFILE=$OUT/$MODVERSION-$TARGET_PRODUCT_FINAL.zip
 
 # Pack it up and sign
 printf "Zipping package..."
@@ -173,8 +174,10 @@ img=`basename $OUTFILE`
 cd `dirname $OUTFILE`
 $MD5 $img >$img.md5
 echo
-echo -e $CL_GRN"Package complete: $OUTFILE"$CL_RST
-cat $img.md5
+echo -e "  ※================================================================※   "
+echo -e "  "$CL_RED"Package complete"$CL_RST" : "$CL_CYN"$OUTFILE "$CL_RST
+echo -e     "$CL_GRN"MD5": $(cat $img.md5 | awk '{ print $1 }')"$CL_RST
+echo -e "  ※================================================================※   "
 echo
 )
 
