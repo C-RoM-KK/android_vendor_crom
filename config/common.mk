@@ -62,6 +62,7 @@ PRODUCT_PACKAGES += \
     LockClock \
     NoiseField \
     OmniSwitch \
+    PhotoPhase \
     PhotoTable \
     ROMStats \
     SunBeam \
