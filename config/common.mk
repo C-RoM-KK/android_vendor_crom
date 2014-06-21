@@ -55,7 +55,6 @@ PRODUCT_PACKAGES += \
     Development \
     DSPManager \
     Galaxy4 \
-    Launcher3 \
     libcyanogen-dsp \
     LiveWallpapers \
     LiveWallpapersPicker \
@@ -69,6 +68,7 @@ PRODUCT_PACKAGES += \
     Superuser \
     su \
     Torch \
+    Trebuchet \
     VoicePlus \
     audio_effects.conf \
     libemoji
